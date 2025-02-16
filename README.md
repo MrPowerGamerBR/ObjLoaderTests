@@ -18,3 +18,5 @@ Also I don't apply the base skeleton rotation, not sure if it is needed but, whe
 
 * https://web.archive.org/web/20050501050322/http://simtech.sourceforge.net/tech/cfp.html
 * https://github.com/mixiate/ts1-blender-io/
+
+By the way, I think that Milkshape 3D's is incorrectly previewing The Sims 1' skeleton. Inverting the quaterions makes the default The Sims 1 skeleton be in a "default" pose (like the Sim standing up, without any weird rotations on the back) and the toe bones aren't below the feet like Milkshape 3D's is.

@@ -210,10 +210,11 @@ class ObjLoaderTests {
             val frame = (195 / 16) % 250
 
             println("Real frame: $frame")
-            // drawTheSimsSKN(simsSknProgramId, bodySknVAO, bodyBitmapId.textureId, Vector3f(0f, 8f, 0f), bodySkn.vertices.size * 9, skeleton)
-            // drawTheSimsSKN(simsSknProgramId, headSknVAO, headBitmapId.textureId, Vector3f(0f, 8f, 0f), headSkn.vertices.size * 9, skeleton)
-            drawTheSimsSKN(simsSknProgramId, bodySknVAO, bodyBitmapId.textureId, Vector3f(0f, 8f, 0f), bodySkn.vertices.size * 9, skeleton, frames[((GLFW.glfwGetTime() / 0.033)).toInt() % frames.size]!!)
-            drawTheSimsSKN(simsSknProgramId, headSknVAO, headBitmapId.textureId, Vector3f(0f, 8f, 0f), headSkn.vertices.size * 9, skeleton, frames[((GLFW.glfwGetTime() / 0.033)).toInt() % frames.size]!!)
+            println(skeleton.skeletons.first().suits)
+            drawTheSimsSKN(simsSknProgramId, bodySknVAO, bodyBitmapId.textureId, Vector3f(0f, 8f, 0f), bodySkn.vertices.size * 9, skeleton)
+            drawTheSimsSKN(simsSknProgramId, headSknVAO, headBitmapId.textureId, Vector3f(0f, 8f, 0f), headSkn.vertices.size * 9, skeleton)
+            // drawTheSimsSKN(simsSknProgramId, bodySknVAO, bodyBitmapId.textureId, Vector3f(0f, 8f, 0f), bodySkn.vertices.size * 9, skeleton, frames[((GLFW.glfwGetTime() / 0.033)).toInt() % frames.size]!!)
+            // drawTheSimsSKN(simsSknProgramId, headSknVAO, headBitmapId.textureId, Vector3f(0f, 8f, 0f), headSkn.vertices.size * 9, skeleton, frames[((GLFW.glfwGetTime() / 0.033)).toInt() % frames.size]!!)
 
             glfwSwapBuffers(window) // swap the color buffers
 
@@ -642,20 +643,26 @@ class ObjLoaderTests {
 
         val bones = mutableMapOf<String, Matrix4f>()
         bones["NULL"] = Matrix4f()
-            .translate(3f, 0f, 0f)
+            .scale(1f, 1f, -1f)
+            .translate(0f, -8f, 0f)
             // .rotateZ(Math.toRadians(90.0).toFloat())
 
         repeat(cmx.skeletons.first().suits.size) {
             val suit = cmx.skeletons.first().suits[it]
-
+            println("Processing suit ${suit.boneName} ($it)")
             val parentBone = bones[suit.parentBone] ?: error("Missing parent bone for ${suit.boneName}! Parent Bone is ${suit.parentBone}")
 
+            println("Suit ${suit.boneName} attaches to parent ${suit.parentBone}")
             // intentionally inverted
             val thisBone = Matrix4f(parentBone)
             thisBone
                 .apply {
                     translate(suit.position)
-                    rotate(suit.rotation)
+                    // I'm not sure why do we need to invert
+                    // Milkshape 3D's skeleton shows up "correctly", but inverting also looks like a correct skeleton?!
+                    // I think that Milkshape 3D is actually WRONG because this skeleton actually looks more correct than the one by MS3D
+                    // After all, why would the toe bones be, by default, BELOW the feet?
+                    rotate(Quaternionf(suit.rotation).invert())
                 }
                 .get(stuff, 16 * it)
 
