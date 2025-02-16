@@ -242,11 +242,11 @@ object TheSimsSKNLoader {
         }
 
         // Do the rest
-        val skill = skills.first { it.skillName == "a2o-walking-loop" }
+        val skill = skills.first { it.skillName == "a2a-apologizer" }
 
         // Attempt to parse CFP
         val floats = loadTheSimsCFP(
-            File(".\\TheSims1Skin\\xskill-A2O-walking-loop.cfp").readBytes(),
+            File(".\\TheSims1Skin\\xskill-a2a-apologizer.cfp").readBytes(),
             skill.positionCount.toInt(),
             skill.rotationCount.toInt()
         )

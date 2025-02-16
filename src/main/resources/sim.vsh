@@ -10,11 +10,13 @@ uniform mat4 view;
 uniform mat4 projection;
 
 out vec2 FragTexCoords;
+out float FragBoneId;
 
 uniform mat4 boneMatrices[29];
 
 void main() {
     FragTexCoords = TexCoords;
+    FragBoneId = BoneId;
 
     // Initialize transformed position
     vec4 transformedPos = vec4(0.0);

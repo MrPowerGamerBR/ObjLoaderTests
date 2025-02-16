@@ -179,13 +179,17 @@ class ObjLoaderTests {
         val cubeObjVAO = createWavefrontOBJModelVAO(cubeObj)
 
         // val skn = TheSimsSKNLoader.loadTheSimsSKN(File("C:\\Users\\leona\\IdeaProjects\\ObjLoaderTests\\TheSims1Skin\\test.skn").readText())
-        val bodySkn = TheSimsSKNLoader.loadTheSimsSKN(File("C:\\Program Files (x86)\\Maxis\\The Sims\\GameData\\Skins\\xskin-B899FAFit_eliseSSX-PELVIS-MBODY.skn").readText())
-        val bodyBitmapId = resourceManager.loadTexture("C:\\Users\\leona\\IdeaProjects\\ObjLoaderTests\\TheSims1Skin\\${bodySkn.bitmapFileName}.bmp")
-        val skeleton = TheSimsSKNLoader.loadTheSimsCMX(File("C:\\Users\\leona\\IdeaProjects\\ObjLoaderTests\\TheSims1Skin\\adult-skeleton.cmx").readText())
-        val headSkn = TheSimsSKNLoader.loadTheSimsSKN(File("C:\\Users\\leona\\IdeaProjects\\ObjLoaderTests\\TheSims1Skin\\test.skn").readText())
-        val headBitmapId = resourceManager.loadTexture("C:\\Users\\leona\\IdeaProjects\\ObjLoaderTests\\TheSims1Skin\\${headSkn.bitmapFileName}.bmp")
+        val bodySkn = TheSimsSKNLoader.loadTheSimsSKN(File(".\\TheSims1Skin\\xskin-bj80fafit_JVDPRMiniFlareSleeve-PELVIS-BODY.skn").readText())
+        val bodyBitmapId = resourceManager.loadTexture(".\\TheSims1Skin\\${bodySkn.bitmapFileName}.bmp")
+        val skeleton = TheSimsSKNLoader.loadTheSimsCMX(File(".\\TheSims1Skin\\adult-skeleton.cmx").readText())
+        val headSkn = TheSimsSKNLoader.loadTheSimsSKN(File(".\\TheSims1Skin\\xskin-c798fa_realbuffy-HEAD-HEAD.skn").readText())
+        val headBitmapId = resourceManager.loadTexture(".\\TheSims1Skin\\${headSkn.bitmapFileName}.bmp")
 
-        val (cmx, frames) = TheSimsSKNLoader.loadTheSimsBCF(File("C:\\Users\\leona\\IdeaProjects\\ObjLoaderTests\\TheSims1Skin\\ross-walking-loop.cmx.bcf").readBytes())
+        skeleton.skeletons[0].suits.forEachIndexed { index, suit ->
+            println("Index $index is ${suit.boneName}")
+        }
+
+        val (cmx, frames) = TheSimsSKNLoader.loadTheSimsBCF(File(".\\TheSims1Skin\\a2a-apologizer.cmx.bcf").readBytes())
 
         val bodySknVAO = createTheSimsSKNModelVAO(bodySkn, skeleton)
         val headSknVAO = createTheSimsSKNModelVAO(headSkn, skeleton)
@@ -202,9 +206,14 @@ class ObjLoaderTests {
             updateViewMatrix()
 
             println("Frames: ${frames.size}")
-            drawCube(programId, cubeObjVAO, texture.textureId, Vector3f(0f, 0f, 0f), false, cubeObj.faces.size * 9)
-            drawTheSimsSKN(simsSknProgramId, bodySknVAO, bodyBitmapId.textureId, Vector3f(0f, 0f, 0f), bodySkn.vertices.size * 9, skeleton, frames[((GLFW.glfwGetTime() / 0.033)).toInt() % 38]!!)
-            drawTheSimsSKN(simsSknProgramId, headSknVAO, headBitmapId.textureId, Vector3f(0f, 0f, 0f), headSkn.vertices.size * 9, skeleton, frames[((GLFW.glfwGetTime() / 0.033)).toInt() % 38]!!)
+            drawCube(programId, cubeObjVAO, texture.textureId, Vector3f(0f, 2f, 0f), false, cubeObj.faces.size * 9)
+            val frame = (195 / 16) % 250
+
+            println("Real frame: $frame")
+            // drawTheSimsSKN(simsSknProgramId, bodySknVAO, bodyBitmapId.textureId, Vector3f(0f, 8f, 0f), bodySkn.vertices.size * 9, skeleton)
+            // drawTheSimsSKN(simsSknProgramId, headSknVAO, headBitmapId.textureId, Vector3f(0f, 8f, 0f), headSkn.vertices.size * 9, skeleton)
+            drawTheSimsSKN(simsSknProgramId, bodySknVAO, bodyBitmapId.textureId, Vector3f(0f, 8f, 0f), bodySkn.vertices.size * 9, skeleton, frames[((GLFW.glfwGetTime() / 0.033)).toInt() % frames.size]!!)
+            drawTheSimsSKN(simsSknProgramId, headSknVAO, headBitmapId.textureId, Vector3f(0f, 8f, 0f), headSkn.vertices.size * 9, skeleton, frames[((GLFW.glfwGetTime() / 0.033)).toInt() % frames.size]!!)
 
             glfwSwapBuffers(window) // swap the color buffers
 
@@ -509,11 +518,11 @@ class ObjLoaderTests {
         }
 
         vertices.toList().chunked(3).forEachIndexed { index, it ->
-            println("Vertex $index: ${it.joinToString(", ")}")
+            // println("Vertex $index: ${it.joinToString(", ")}")
         }
 
         uvCoordinates.toList().chunked(2).forEachIndexed { index, it ->
-            println("UV Coordinates $index: ${it.joinToString(", ")}")
+            // println("UV Coordinates $index: ${it.joinToString(", ")}")
         }
 
         /* var idx2 = 0
@@ -634,7 +643,7 @@ class ObjLoaderTests {
         val bones = mutableMapOf<String, Matrix4f>()
         bones["NULL"] = Matrix4f()
             .translate(3f, 0f, 0f)
-            .rotateZ(Math.toRadians(90.0).toFloat())
+            // .rotateZ(Math.toRadians(90.0).toFloat())
 
         repeat(cmx.skeletons.first().suits.size) {
             val suit = cmx.skeletons.first().suits[it]
@@ -644,8 +653,10 @@ class ObjLoaderTests {
             // intentionally inverted
             val thisBone = Matrix4f(parentBone)
             thisBone
-                .translate(suit.position.x, suit.position.y, suit.position.z)
-                .rotate(suit.rotation)
+                .apply {
+                    translate(suit.position)
+                    rotate(suit.rotation)
+                }
                 .get(stuff, 16 * it)
 
             bones[suit.boneName] = thisBone
@@ -671,6 +682,12 @@ class ObjLoaderTests {
     }
 
     fun drawTheSimsSKN(programId: Int, quadVAO: Int, textureId: Int, position: Vector3f, triangleCount: Int, cmx: TheSimsSKNLoader.TheSimsCMX, frameBones: List<TheSimsSKNLoader.FrameWrapper>) {
+        for (frameBones in frameBones) {
+            println(frameBones.boneName)
+            println("Pos: ${frameBones.position.x}, ${frameBones.position.y}, ${frameBones.position.z}")
+            println("Rot: ${frameBones.rotation.x}, ${frameBones.rotation.y}, ${frameBones.rotation.z}, ${frameBones.rotation.w}")
+        }
+
         glUseProgram(programId)
 
         glActiveTexture(GL_TEXTURE0)
@@ -687,8 +704,10 @@ class ObjLoaderTests {
 
         val bones = mutableMapOf<String, Matrix4f>()
         bones["NULL"] = Matrix4f()
-            .translate(0f, 0f, 0f)
-            .rotateX(Math.toRadians(180.0).toFloat())
+            .scale(1f, 1f, -1f)
+            .translate(0f, -8f, 0f)
+        // .rotateZ(Math.toRadians(-180.0).toFloat())
+
 
         repeat(cmx.skeletons.first().suits.size) {
             val suit = cmx.skeletons.first().suits[it]
@@ -702,21 +721,13 @@ class ObjLoaderTests {
                 // .rotate(suit.rotation)
                 .apply {
                     var boneTarget = suit.boneName
-                    if (boneTarget.startsWith("L_ARM")) {
-                        boneTarget = boneTarget.replace("L_ARM", "R_ARM")
-                    } else if (boneTarget.startsWith("R_ARM")) {
-                        boneTarget = boneTarget.replace("R_ARM", "L_ARM")
-                    }
-
-                    if (boneTarget.startsWith("L_LEG")) {
-                        boneTarget = boneTarget.replace("L_LEG", "R_LEG")
-                    } else if (boneTarget.startsWith("R_LEG")) {
-                        boneTarget = boneTarget.replace("R_LEG", "L_LEG")
-                    }
                     val fw = frameBones.first { it.boneName == boneTarget }
+
                     translate(suit.position)
-                    // translate(fw.position)
-                    rotate(Quaternionf(fw.rotation.x , fw.rotation.y * -1, fw.rotation.z, fw.rotation.w))
+                    translate(fw.position)
+                    // rotate(suit.rotation)
+
+                    rotate(Quaternionf(fw.rotation.x, fw.rotation.y, fw.rotation.z, fw.rotation.w).invert())
                 }
                 .get(stuff, 16 * it)
 
@@ -765,14 +776,14 @@ class ObjLoaderTests {
      */
     private fun updateViewMatrix() {
         // We have a function to update the view matrix due to the camera rotation
-        this.cameraPosition = Vector3f(-12f, 0f, 0f) // Camera is at (4,3,3), in World Space
+        this.cameraPosition = Vector3f(-12f, 8f, 0f) // Camera is at (4,3,3), in World Space
             .rotateY(Math.toRadians(this.cameraRotationY.toDouble()).toFloat())
 
         // println("Camera Position: ${this.cameraPosition.x}, ${this.cameraPosition.y}, ${this.cameraPosition.z}")
 
         this.view = Matrix4f().lookAt(
             this.cameraPosition,
-            Vector3f(0f, 0f, 0f),
+            Vector3f(0f, 4f, 0f),
             Vector3f(0f, 1f, 0f) // Head is up (set to 0,-1,0 to look upside-down)
         )
     }
