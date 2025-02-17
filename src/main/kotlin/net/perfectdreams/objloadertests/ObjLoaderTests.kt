@@ -211,10 +211,10 @@ class ObjLoaderTests {
 
             println("Real frame: $frame")
             println(skeleton.skeletons.first().suits)
-            drawTheSimsSKN(simsSknProgramId, bodySknVAO, bodyBitmapId.textureId, Vector3f(0f, 8f, 0f), bodySkn.vertices.size * 9, skeleton)
-            drawTheSimsSKN(simsSknProgramId, headSknVAO, headBitmapId.textureId, Vector3f(0f, 8f, 0f), headSkn.vertices.size * 9, skeleton)
-            // drawTheSimsSKN(simsSknProgramId, bodySknVAO, bodyBitmapId.textureId, Vector3f(0f, 8f, 0f), bodySkn.vertices.size * 9, skeleton, frames[((GLFW.glfwGetTime() / 0.033)).toInt() % frames.size]!!)
-            // drawTheSimsSKN(simsSknProgramId, headSknVAO, headBitmapId.textureId, Vector3f(0f, 8f, 0f), headSkn.vertices.size * 9, skeleton, frames[((GLFW.glfwGetTime() / 0.033)).toInt() % frames.size]!!)
+            // drawTheSimsSKN(simsSknProgramId, bodySknVAO, bodyBitmapId.textureId, Vector3f(0f, 8f, 0f), bodySkn.vertices.size * 9, skeleton)
+            // drawTheSimsSKN(simsSknProgramId, headSknVAO, headBitmapId.textureId, Vector3f(0f, 8f, 0f), headSkn.vertices.size * 9, skeleton)
+            drawTheSimsSKN(simsSknProgramId, bodySknVAO, bodyBitmapId.textureId, Vector3f(0f, 8f, 0f), bodySkn.vertices.size * 9, skeleton, frames[((GLFW.glfwGetTime() / 0.033)).toInt() % frames.size]!!)
+            drawTheSimsSKN(simsSknProgramId, headSknVAO, headBitmapId.textureId, Vector3f(0f, 8f, 0f), headSkn.vertices.size * 9, skeleton, frames[((GLFW.glfwGetTime() / 0.033)).toInt() % frames.size]!!)
 
             glfwSwapBuffers(window) // swap the color buffers
 
